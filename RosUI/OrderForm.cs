@@ -19,8 +19,8 @@ namespace RosUI
         Order order;
         OrderLogic orderLogic;
         TableLogic tableLogic;
-        List<Dish> dishesInOrderProcess = new List<Dish>(); // For the orders that are in process (between order- will be ordered)
-        List<Drink> drinkInOrderProcess = new List<Drink>();
+        List<Dish> dishesInOrderProcess; // For the orders that are in process (between order- will be ordered)
+        List<Drink> drinkInOrderProcess; // For the orders that are in process (between order- will be ordered)
         RosMain rosMain;
         Employee emp;
         public FormOrder(Table table, Employee emp, RosMain rosMain)
@@ -34,6 +34,8 @@ namespace RosUI
             dishLogic = new DishLogic();
             drinkLogic = new DrinkLogic();
             tableLogic = new TableLogic();
+            dishesInOrderProcess = new List<Dish>();
+            drinkInOrderProcess = new List<Drink>();
             lblTableNumber.Text = $"{lblTableNumber.Text} {table.TableNumber.ToString()}";
 
             ReadContainedItems();
