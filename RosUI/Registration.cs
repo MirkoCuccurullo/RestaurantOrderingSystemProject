@@ -95,7 +95,7 @@ namespace RosUI
             //If the password is valid store the salt and digest
             if (IsValidPassword(employee.PinCode))
             {
-                HashWithSaltResult hashResultSha256 = EncryptPassword(txtPinCode.Text);
+                HashWithSaltResult hashResultSha256 = HashPassword(txtPinCode.Text);
                 employee.Salt = hashResultSha256.Salt;
                 employee.Digest = hashResultSha256.Digest;
                 return true;
@@ -133,8 +133,8 @@ namespace RosUI
             return Roles.None;
         }
 
-        //Encrypts the password
-        private HashWithSaltResult EncryptPassword(string password)
+        //Hashes the password
+        private HashWithSaltResult HashPassword(string password)
         {
             PasswordWithSaltHasher pwHasher = new PasswordWithSaltHasher();
             HashWithSaltResult hashResultSha256 = pwHasher.HashWithSalt(password, 64, SHA256.Create());

@@ -14,6 +14,11 @@ namespace RosLogic
             employeedb.UpdatePassword(employee);
         }
 
+        public List<Employee> GetAllEmployees()
+        {
+            return employeedb.GetAllEmployees();
+        }
+
         public List<SecretQuestion> GetAllSecretQuestions()
         {
             return employeedb.GetAllSecretQuestions();
@@ -22,6 +27,11 @@ namespace RosLogic
         public Employee GetEmployeeByUsername(string username)
         {
             return employeedb.GetEmployeeByUsername(username);
+        }
+
+        public Employee GetEmployeeByUsernameAndPassword(string username, string password)
+        {
+            return employeedb.GetEmployeeByUsernameAndPassword(username, password);
         }
 
         public void Add(Employee employee)

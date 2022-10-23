@@ -26,6 +26,17 @@ namespace RosDAL
             return ReadTable(ExecuteSelectQuery(query, sqlParameters));
         }
 
+        public Employee GetEmployeeByUsernameAndPassword(string username, string password)
+        {
+            string query = $"SELECT EmplID, Name, Username, Salt, Digest, SecretAnswer, Role FROM [Employee] WHERE Username = @Username AND Salt = @Salt;";
+            SqlParameter[] sqlParameters =
+            {
+                new SqlParameter("@Username", username)
+                , new SqlParameter("@Salt", password)
+            };
+            return ReadTable(ExecuteSelectQuery(query, sqlParameters));
+        }
+
         public List<Employee> GetAllEmployees()
         {
             string query = $"SELECT EmplID, Name, Username, Salt, Digest, SecretAnswer, Role FROM [Employee] WHERE Username = @Username;";

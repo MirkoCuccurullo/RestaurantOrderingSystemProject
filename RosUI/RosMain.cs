@@ -755,13 +755,13 @@ namespace RosUI
         {
             //send an update to all TableOverview
             foreach (TableOverview to in tableOverview)
-                to.DishReady(dish.TableNumber);
+                to.UpdateTableStatus(dish.TableNumber, TableStatus.DishReady);
         }
         private void UpdateTableToReadyDrink(OrderedDrink drink)
         {
             //send an update to all TableOverview
             foreach (TableOverview to in tableOverview)
-                to.DrinkReady(drink.TableNumber);
+                to.UpdateTableStatus(drink.TableNumber, TableStatus.DrinkReady);
         }
 
         //add waiter to "observers" list
@@ -775,7 +775,7 @@ namespace RosUI
             //Update all registered TableOverview OrderIsRecieved
             foreach (TableOverview to in tableOverview)
             {
-                to.OrderRecieved(number);
+                to.UpdateTableStatus(number, TableStatus.Standby);
             }
         }
 

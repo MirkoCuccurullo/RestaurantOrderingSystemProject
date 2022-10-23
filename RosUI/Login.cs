@@ -15,6 +15,7 @@ namespace RosUI
         private RosMain main;
         private Employee employee;
         private EmployeeLogic employeeLogic;
+        private List<Employee> employees;
 
 
         public Login()
@@ -104,7 +105,10 @@ namespace RosUI
             if (employee.Salt == null || employee.Digest == null)
                 return false;
 
-                return employee.Digest.ToString() == EncryptPassword(txtPinCode.Text, employee.Salt).Digest;
+            if (employeeLogic.GetEmployeeByUsernameAndPassword(employee.Username, HashPassword(txtPinCode.Text, employee.Salt).Digest) == null)
+                return false;
+            else
+                return true;
         }
 
         //Write error to text file
@@ -117,8 +121,8 @@ namespace RosUI
             writer.Close();
         }
 
-        //This method encrypts the password
-        private HashWithSaltResult EncryptPassword(string password, string salt)
+        //This method hashes the password
+        private HashWithSaltResult HashPassword(string password, string salt)
         {
             PasswordWithSaltHasher pwHasher = new PasswordWithSaltHasher();
             HashWithSaltResult hashResultSha256 = pwHasher.Hash(password, SHA256.Create(), salt);
