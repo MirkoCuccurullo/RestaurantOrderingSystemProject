@@ -37,14 +37,6 @@ namespace RosDAL
             return ReadTable(ExecuteSelectQuery(query, sqlParameters));
         }
 
-        public List<Employee> GetAllEmployees()
-        {
-            string query = $"SELECT EmplID, Name, Username, Salt, Digest, SecretAnswer, Role FROM [Employee] WHERE Username = @Username;";
-            SqlParameter[] sqlParameters = new SqlParameter[0];
-            
-            return ReadTables(ExecuteSelectQuery(query, sqlParameters));
-        }
-
         public void UpdatePassword(Employee employee)
         {
             string query = $"UPDATE Employee SET Salt = @Salt, Digest = @Digest WHERE EmplID = @EmplID;";

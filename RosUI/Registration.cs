@@ -12,16 +12,16 @@ namespace RosUI
     public partial class Registration : Form
     {
         private EmployeeLogic employeeLogic;
-        private RosMain rosMain;
         private Employee employee;
         private List<SecretQuestion> questions;
+        private Tool tool;
 
-        public Registration(RosMain rosMain)
+        public Registration()
         {
             InitializeComponent();
             employeeLogic = new EmployeeLogic();
             employee = new Employee();
-            this.rosMain = rosMain;       
+            tool = new Tool();     
             questions = employeeLogic.GetAllSecretQuestions();
 
             foreach (SecretQuestion question in questions)
@@ -69,7 +69,7 @@ namespace RosUI
             catch (Exception exp)
             {
                 MessageBox.Show(exp.Message, "Error");
-                rosMain.WriteError(exp, exp.Message);
+                tool.WriteError(exp, exp.Message);
             }
         }
 
@@ -85,7 +85,7 @@ namespace RosUI
             catch (Exception exp)
             {
                 MessageBox.Show(exp.Message, "Error");
-                rosMain.WriteError(exp, exp.Message);
+                tool.WriteError(exp, exp.Message);
             }
         }
 
@@ -95,7 +95,7 @@ namespace RosUI
             //If the password is valid store the salt and digest
             if (IsValidPassword(employee.PinCode))
             {
-                HashWithSaltResult hashResultSha256 = HashPassword(txtPinCode.Text);
+                HashWithSaltResult hashResultSha256 = tool.HashPassword(txtPinCode.Text);
                 employee.Salt = hashResultSha256.Salt;
                 employee.Digest = hashResultSha256.Digest;
                 return true;
@@ -131,15 +131,6 @@ namespace RosUI
             MessageBox.Show("Please check if you have the correct license key");
             txtLicenseKey.Text = "";
             return Roles.None;
-        }
-
-        //Hashes the password
-        private HashWithSaltResult HashPassword(string password)
-        {
-            PasswordWithSaltHasher pwHasher = new PasswordWithSaltHasher();
-            HashWithSaltResult hashResultSha256 = pwHasher.HashWithSalt(password, 64, SHA256.Create());
-
-            return hashResultSha256;
         }
 
         //Check if the password the user entered meets the requirement

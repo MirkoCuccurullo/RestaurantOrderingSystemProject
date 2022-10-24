@@ -14,11 +14,6 @@ namespace RosLogic
             employeedb.UpdatePassword(employee);
         }
 
-        public List<Employee> GetAllEmployees()
-        {
-            return employeedb.GetAllEmployees();
-        }
-
         public List<SecretQuestion> GetAllSecretQuestions()
         {
             return employeedb.GetAllSecretQuestions();

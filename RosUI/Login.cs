@@ -12,18 +12,14 @@ namespace RosUI
 {
     public partial class Login : Form
     {
-        private RosMain main;
-        private Employee employee;
         private EmployeeLogic employeeLogic;
-        private List<Employee> employees;
-
+        private Tool tool;
 
         public Login()
         {
             InitializeComponent();
             employeeLogic = new EmployeeLogic();
-            employee = new Employee();
-            main = new RosMain(employee);
+            tool = new Tool();
         }
 
         //Will login the user in
@@ -51,13 +47,13 @@ namespace RosUI
                     }
                 }
 
-                employee = employeeLogic.GetEmployeeByUsername(txtUsername.Text);       
+                Employee employee = employeeLogic.GetEmployeeByUsername(txtUsername.Text);       
 
                 //Checks the login password and opens the corresponding view
-                if (CheckPassword())
+                if (CheckPassword(employee))
                 {
                     this.Hide();
-                    main = new RosMain(employee);
+                    RosMain main = new RosMain(employee);
                     if (employee.Roles == Roles.Waiter)
                     {
                         new TableOverview(employee, main).Show();
@@ -74,7 +70,7 @@ namespace RosUI
             catch (Exception exp)
             {
                 MessageBox.Show(exp.Message, "Error");
-                WriteError(exp, exp.Message);
+                tool.WriteError(exp, exp.Message);
             }         
         }
 
@@ -90,44 +86,25 @@ namespace RosUI
             try
             {
                 this.Hide();
-                new Registration(main).Show();
+                new Registration().Show();
             }
             catch (Exception exp)
             {
                 MessageBox.Show(exp.Message, "Error");
-                WriteError(exp, exp.Message);
+                tool.WriteError(exp, exp.Message);
             }
         }
 
         //Encrypts the password from the login and checks it with the one in the database
-        private bool CheckPassword()
+        private bool CheckPassword(Employee employee)
         {
             if (employee.Salt == null || employee.Digest == null)
                 return false;
 
-            if (employeeLogic.GetEmployeeByUsernameAndPassword(employee.Username, HashPassword(txtPinCode.Text, employee.Salt).Digest) == null)
+            if (employeeLogic.GetEmployeeByUsernameAndPassword(employee.Username, tool.HashPassword(txtPinCode.Text, employee.Salt).Digest) == null)
                 return false;
             else
                 return true;
-        }
-
-        //Write error to text file
-        private void WriteError(Exception e, string errorMessage)
-        {
-            StreamWriter writer = File.AppendText("ErrorLog.txt");
-            writer.WriteLine($"Error occurred: {errorMessage}");
-            writer.WriteLine(e);
-            writer.WriteLine(DateTime.Now);
-            writer.Close();
-        }
-
-        //This method hashes the password
-        private HashWithSaltResult HashPassword(string password, string salt)
-        {
-            PasswordWithSaltHasher pwHasher = new PasswordWithSaltHasher();
-            HashWithSaltResult hashResultSha256 = pwHasher.Hash(password, SHA256.Create(), salt);
-
-            return hashResultSha256;
-        }
+        }     
     }
 }

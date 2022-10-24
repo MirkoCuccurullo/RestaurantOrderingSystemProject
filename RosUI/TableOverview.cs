@@ -274,6 +274,13 @@ namespace RosUI
             {
                 if (orderedDrink.TableNumber == table.TableNumber && orderedDrink.DrinkStatus == 0)
                 {
+
+
+
+                    //refactor
+
+
+
                     TimeSpan timeTaken = DateTime.Now - orderedDrink.TimeDrinkOrdered;
 
                     button.Text = $"{timeTaken.TotalMinutes.ToString("00")} minutes";
@@ -389,13 +396,12 @@ namespace RosUI
             if (orderedDishes.Count == 0 && orderedDrinks.Count == 0)
             {
                 table.TableStatus = TableStatus.Served;
-                tableLogic.Update(table);
             }
             else
             {
                 table.TableStatus = TableStatus.Standby;
-                tableLogic.Update(table);
             }
+            tableLogic.Update(table);
         }
 
         //checks what the ordered item a specific table has and displays the icon
@@ -418,7 +424,7 @@ namespace RosUI
             }
             else
             {
-                return;
+                return; // remove
             }
         }
 
@@ -456,7 +462,8 @@ namespace RosUI
             {
                 if (tableNumber == table.TableNumber)
                 {
-                    UpdateTableDatabaseAndButton(table, tableNumber, status);                   
+                    UpdateTableDatabaseAndButton(table, tableNumber, status);        
+                    // ... break
                 }
             }           
         }
