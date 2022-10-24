@@ -25,6 +25,7 @@ namespace RosUI
         private List<PictureBox> drinkIcons;
         private List<OrderedDrink> orderedDrinks;
         private List<OrderedDish> orderedDishes;
+        private Tool tool;
 
         public TableOverview(Employee employee, RosMain rosMain)
         {
@@ -40,6 +41,7 @@ namespace RosUI
             labels = new List<Label>();
             dishIcons = new List<PictureBox>();
             drinkIcons = new List<PictureBox>();
+            tool = new Tool();
             orderedDrinks = orderedDrinkLogic.GetAllOrderedDrinks();
             orderedDishes = orderedDishLogic.GetAllOrderedDish();
             numberOfTables = tableLogic.GetAmountOfTables();             
@@ -210,7 +212,7 @@ namespace RosUI
         private void DisplayError(Exception exp)
         {
             MessageBox.Show(exp.Message, "Error");
-            rosMain.WriteError(exp, exp.Message);
+            tool.WriteError(exp, exp.Message);
         }
 
         //Updates all the table buttons every minute
@@ -274,25 +276,11 @@ namespace RosUI
             {
                 if (orderedDrink.TableNumber == table.TableNumber && orderedDrink.DrinkStatus == 0)
                 {
-
-
-
-                    //refactor
-
-
-
-                    TimeSpan timeTaken = DateTime.Now - orderedDrink.TimeDrinkOrdered;
-
-                    button.Text = $"{timeTaken.TotalMinutes.ToString("00")} minutes";
-
-                    if (button.Text == "00 minutes")
-                    {
-                        button.Text = "01 minute";
-                    }
+                    CalculateTime(orderedDrink.TimeDrinkOrdered, button);
                 }
             }
             return button;
-        }
+        } 
 
         //calculates the time taken and displays it on the button
         public Button CalculateDishTimeTaken(Button button, Table table)
@@ -301,17 +289,22 @@ namespace RosUI
             {
                 if (orderedDish.TableNumber == table.TableNumber && orderedDish.Status == 0)
                 {
-                    TimeSpan timeTaken = DateTime.Now - orderedDish.TimeDishOrdered;
-
-                    button.Text = $"{timeTaken.TotalMinutes.ToString("00")} minutes";
-
-                    if (button.Text == "00 minutes")
-                    {
-                        button.Text = "01 minute";
-                    }
+                   CalculateTime(orderedDish.TimeDishOrdered, button);
                 }
             }
             return button;
+        }
+
+        public void CalculateTime(DateTime dateTime, Button button)
+        {
+            TimeSpan timeTaken = DateTime.Now - dateTime;
+
+            button.Text = $"{timeTaken.TotalMinutes.ToString("00")} minutes";
+
+            if (button.Text == "00 minutes")
+            {
+                button.Text = "01 minute";
+            }
         }
 
         //Updates all the buttons with the newest status
