@@ -227,29 +227,29 @@ namespace RosUI
             switch (table.TableStatus)
             {
                 case TableStatus.Empty:
-                    return UpdateButton(button, label, drinkIcon, dishIcon, SystemColors.ControlLight, "Empty", Color.Black);
+                    return UpdateButton(button, label, drinkIcon, dishIcon, SystemColors.ControlLight, TableStatus.Empty, Color.Black);
                 case TableStatus.Occupied:
-                    return UpdateButton(button, label, drinkIcon, dishIcon, Color.Red, "Occupied", Color.White);
+                    return UpdateButton(button, label, drinkIcon, dishIcon, Color.Red, TableStatus.Occupied, Color.White);
                 case TableStatus.Standby:
                     return UpdateButtonToStandby(table, button, label, drinkIcon, dishIcon);
                 case TableStatus.DrinkReady:
-                    return UpdateButton(button, label, drinkIcon, dishIcon, Color.LightGreen, "Drink Ready", Color.Black);
+                    return UpdateButton(button, label, drinkIcon, dishIcon, Color.LightGreen, TableStatus.DrinkReady, Color.Black);
                 case TableStatus.DishReady:
-                    return UpdateButton(button, label, drinkIcon, dishIcon, Color.LightGreen, "Dish Ready", Color.Black);
+                    return UpdateButton(button, label, drinkIcon, dishIcon, Color.LightGreen, TableStatus.DishReady, Color.Black);
                 case TableStatus.Served:
-                    return UpdateButton(button, label, drinkIcon, dishIcon, Color.Yellow, "Served", Color.Black);
+                    return UpdateButton(button, label, drinkIcon, dishIcon, Color.Yellow, TableStatus.Served, Color.Black);
             }
             return button;
         }
 
         //update the button properties according to the status
-        private static Button UpdateButton(Button button, Label label, PictureBox drinkIcon, PictureBox dishIcon, Color color, string text, Color textColor)
+        private static Button UpdateButton(Button button, Label label, PictureBox drinkIcon, PictureBox dishIcon, Color color, TableStatus status, Color textColor)
         {
             button.BackColor = color;
             label.BackColor = color;
             drinkIcon.BackColor = color;
             dishIcon.BackColor = color;
-            button.Text = text;
+            button.Text = status.ToString();
             button.ForeColor = textColor;
             label.ForeColor = textColor;
             return button;
@@ -262,7 +262,7 @@ namespace RosUI
             label.BackColor = Color.LightBlue;
             drinkIcon.BackColor = Color.LightBlue;
             dishIcon.BackColor = Color.LightBlue;
-            button.Text = "Standby";
+            button.Text = TableStatus.Standby.ToString();
             button.ForeColor = Color.Black;
             CalculateDishTimeTaken(button, table);
             CalculateDrinkTimeTaken(button, table);
@@ -295,6 +295,7 @@ namespace RosUI
             return button;
         }
 
+        //calculates how long the order is taking
         public void CalculateTime(DateTime dateTime, Button button)
         {
             TimeSpan timeTaken = DateTime.Now - dateTime;
@@ -383,12 +384,23 @@ namespace RosUI
         //checks for empty list to make the order of the table served
         public void CheckOrderedItems(Table table)
         {
-            List<OrderedDish> orderedDishes = tableLogic.GetOrderedDishes(table.TableNumber, DishStatus.ToPrepare);
-            List<OrderedDrink> orderedDrinks = tableLogic.GetOrderedDrinks(table.TableNumber, DrinkStatus.ToPrepare);
+            List<OrderedDish> preparingDishes = tableLogic.GetOrderedDishes(table.TableNumber, DishStatus.ToPrepare);
+            List<OrderedDrink> preparingDrinks = tableLogic.GetOrderedDrinks(table.TableNumber, DrinkStatus.ToPrepare);
+            List<OrderedDish> readyDishes = tableLogic.GetOrderedDishes(table.TableNumber, DishStatus.PickUp);
+            List<OrderedDrink> readyDrinks = tableLogic.GetOrderedDrinks(table.TableNumber, DrinkStatus.PickUp);
 
-            if (orderedDishes.Count == 0 && orderedDrinks.Count == 0)
+
+            if (preparingDishes.Count == 0 && preparingDrinks.Count == 0)
             {
                 table.TableStatus = TableStatus.Served;
+            }
+            else if(readyDishes.Count > 0)
+            {
+                table.TableStatus = TableStatus.DishReady;
+            }
+            else if (readyDrinks.Count > 0)
+            {
+                table.TableStatus = TableStatus.DrinkReady;
             }
             else
             {
@@ -405,46 +417,42 @@ namespace RosUI
 
             if (orderedDishes.Count > 0 && orderedDrinks.Count == 0)
             {
-                ShowRunningDishIcon(table.TableNumber);
+                ShowRunningDishIcon(table);
             }
             else if (orderedDrinks.Count > 0 && orderedDishes.Count == 0)
             {
-                ShowRunningDrinkIcon(table.TableNumber);
+                ShowRunningDrinkIcon(table);
             }
             else if (orderedDrinks.Count > 0 && orderedDishes.Count > 0)
             {
-                ShowRunningDishAndDrinkIcon(table.TableNumber);
-            }
-            else
-            {
-                return; // remove
+                ShowRunningDishAndDrinkIcon(table);
             }
         }
 
         //Displays the dish icon when a order with dishes are being prepared
-        public void ShowRunningDishIcon(int tableNumber)
+        public void ShowRunningDishIcon(Table table)
         {
-            dishIcons[tableNumber - 1].Visible = true;
+            dishIcons[table.TableNumber - 1].Visible = true;
         }
 
         //displays only the drink icon 
-        public void ShowRunningDrinkIcon(int tableNumber)
+        public void ShowRunningDrinkIcon(Table table)
         {
             //changes the state of the Icon and the position.
-            Point point = drinkIcons[tableNumber - 1].Location;
+            Point point = drinkIcons[table.TableNumber - 1].Location;
             if (point.X == 131 || point.X == 396)
             {
                 point.X += 32;
             }
-            drinkIcons[tableNumber - 1].Location = point;
-            drinkIcons[tableNumber - 1].Visible = true;
+            drinkIcons[table.TableNumber - 1].Location = point;
+            drinkIcons[table.TableNumber - 1].Visible = true;
         }
 
         //displays both the drink and dish icon
-        public void ShowRunningDishAndDrinkIcon(int tableNumber)
+        public void ShowRunningDishAndDrinkIcon(Table table)
         {
-            dishIcons[tableNumber - 1].Visible = true;
-            drinkIcons[tableNumber - 1].Visible = true;
+            dishIcons[table.TableNumber - 1].Visible = true;
+            drinkIcons[table.TableNumber - 1].Visible = true;
         }
 
         //Updates database when the order is received in the kitchen
@@ -455,8 +463,8 @@ namespace RosUI
             {
                 if (tableNumber == table.TableNumber)
                 {
-                    UpdateTableDatabaseAndButton(table, tableNumber, status);        
-                    // ... break
+                    UpdateTableDatabaseAndButton(table, tableNumber, status);
+                    break;
                 }
             }           
         }
