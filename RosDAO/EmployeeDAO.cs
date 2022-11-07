@@ -49,33 +49,6 @@ namespace RosDAL
             ExecuteEditQuery(query, sqlParameters);
         }
 
-        private List<Employee> ReadTables(DataTable dataTable)
-        {
-            List<Employee> employees = new List<Employee>();
-            try
-            {
-                foreach (DataRow dr in dataTable.Rows)
-                {
-                    Employee employee = new Employee();
-                    {
-                        employee.EmplID = (int)dr["EmplID"];
-                        employee.Name = (string)dr["Name"].ToString();
-                        employee.Username = (string)dr["Username"].ToString();
-                        employee.Salt = (string)dr["Salt"].ToString();
-                        employee.Digest = (string)dr["Digest"].ToString();
-                        employee.SecretAnswer = (string)dr["SecretAnswer"].ToString();
-                        employee.Roles = (Roles)dr["Role"];
-                    };
-                    employees.Add(employee);
-                }
-                return employees;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }          
-        }
-
         private Employee ReadTable(DataTable dataTable)
         {          
             try
