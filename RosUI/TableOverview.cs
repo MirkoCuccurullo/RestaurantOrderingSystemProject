@@ -359,8 +359,7 @@ namespace RosUI
             }
             catch (Exception exp)
             {
-                MessageBox.Show("Error", exp.Message);
-                rosMain.WriteError(exp, exp.Message);
+                DisplayError(exp);
             }
         }
 
@@ -376,8 +375,7 @@ namespace RosUI
             }
             catch (Exception exp)
             {
-                MessageBox.Show("Error", exp.Message);
-                rosMain.WriteError(exp, exp.Message);
+                DisplayError(exp);
             }
         }
 
