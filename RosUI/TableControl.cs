@@ -72,16 +72,16 @@ namespace RosUI
                     ShowAllDrinks(drinks);
                     break;
                 case "Running Dish":
-                    ShowPreparingDishes(dishes);
+                    ShowDishes(dishes, DishStatus.ToPrepare, "Preparing...", Color.LightBlue);
                     break;
                 case "Running Drink":
-                    ShowPreparingDrinks(drinks);
+                    ShowDrinks(drinks, DrinkStatus.ToPrepare, "Preparing...", Color.LightBlue);
                     break;
                 case "Dish Ready":
-                    ShowDishReady(dishes);
+                    ShowDishes(dishes, DishStatus.PickUp, "Dish Ready", Color.LightGreen);
                     break;
                 case "Drink Ready":
-                    ShowDrinkReady(drinks);
+                    ShowDrinks(drinks, DrinkStatus.PickUp, "Drink Ready", Color.LightGreen);
                     break;
                 case "Served":
                     ShowServedItems(dishes, drinks);
@@ -93,29 +93,21 @@ namespace RosUI
         private void ShowAllDishes(List<OrderedDish> dishes)
         {
             foreach (OrderedDish dish in dishes)
-            {
-                ListViewItem lvItem = new ListViewItem(dish.ItemName.ToString());
-                lvItem.SubItems.Add(dish.TimeDishOrdered.ToShortTimeString());
+            { 
                 if (dish.Status == DishStatus.ToPrepare)
                 {
-                    lvItem.SubItems.Add("Preparing...");
-                    lvItem.BackColor = Color.LightBlue;
+                    AddDishesToListView(dish, "Preparing...", Color.LightBlue);
                 }
                 else if (dish.Status == DishStatus.PickUp)
                 {
-                    lvItem.SubItems.Add("Dish Ready");
-                    lvItem.BackColor = Color.LightGreen;
+                    AddDishesToListView(dish, "Dish Ready", Color.LightGreen);
                 }
                 else if (dish.Status == DishStatus.Serve)
                 {
-                    lvItem.SubItems.Add("Served");
-                    lvItem.BackColor = Color.Yellow;
+                    AddDishesToListView(dish, "Served", Color.Yellow);
                 }
                 else
                     return;
-                lvItem.SubItems.Add(dish.OrderedDishAmount.ToString());                
-
-                lvOrders.Items.Add(lvItem);
             }
         }
 
@@ -124,95 +116,43 @@ namespace RosUI
         {
             foreach (OrderedDrink drink in drinks)
             {
-                ListViewItem lvItem = new ListViewItem(drink.ItemName.ToString());
-                lvItem.SubItems.Add(drink.TimeDrinkOrdered.ToShortTimeString());
                 if (drink.DrinkStatus == DrinkStatus.ToPrepare)
                 {
-                    lvItem.SubItems.Add("Preparing...");
-                    lvItem.BackColor = Color.LightBlue;
+                    AddDrinksToListView(drink, "Preparing...", Color.LightBlue);
                 }
                 else if (drink.DrinkStatus == DrinkStatus.PickUp)
                 {
-                    lvItem.SubItems.Add("Drink Ready");
-                    lvItem.BackColor = Color.LightGreen;
+                    AddDrinksToListView(drink, "Drink Ready", Color.LightGreen);
                 }
                 else if (drink.DrinkStatus == DrinkStatus.Serve)
                 {
-                    lvItem.SubItems.Add("Served");
-                    lvItem.BackColor = Color.Yellow;
+                    AddDrinksToListView(drink, "Served", Color.Yellow);
                 }
                 else
                     return;
-                lvItem.SubItems.Add(drink.OrderedDrinkAmount.ToString());
-
-                lvOrders.Items.Add(lvItem);
             }
         }
 
-        //show all the preparing dishes in the list view
-        private void ShowPreparingDishes(List<OrderedDish> dishes)
-        {
-            foreach (OrderedDish dish in dishes)
-            {
-                if (dish.Status == DishStatus.ToPrepare)
-                {
-                    ListViewItem lvItem = new ListViewItem(dish.ItemName.ToString());
-                    lvItem.SubItems.Add(dish.TimeDishOrdered.ToShortTimeString());
-                    lvItem.SubItems.Add("Preparing...");
-                    lvItem.BackColor = Color.LightBlue;
-                    lvItem.SubItems.Add(dish.OrderedDishAmount.ToString());
-                    lvOrders.Items.Add(lvItem);
-                }
-            }                  
-        }
-
         //show all the preparing drinks in the list view
-        private void ShowPreparingDrinks(List<OrderedDrink> drinks)
+        private void ShowDrinks(List<OrderedDrink> drinks, DrinkStatus status, string text, Color color)
         {
             foreach (OrderedDrink drink in drinks)
             {
-                if (drink.DrinkStatus == DrinkStatus.ToPrepare)
+                if (drink.DrinkStatus == status)
                 {
-                    ListViewItem lvItem = new ListViewItem(drink.ItemName.ToString());
-                    lvItem.SubItems.Add(drink.TimeDrinkOrdered.ToShortTimeString());
-                    lvItem.SubItems.Add("Preparing...");
-                    lvItem.BackColor = Color.LightBlue;
-                    lvItem.SubItems.Add(drink.OrderedDrinkAmount.ToString());
-                    lvOrders.Items.Add(lvItem);
+                    AddDrinksToListView(drink, text, color);
                 }
             }
         }
 
         //show all the dishes that are ready in the list view
-        private void ShowDishReady(List<OrderedDish> dishes)
+        private void ShowDishes(List<OrderedDish> dishes, DishStatus status, string text, Color color)
         {
             foreach (OrderedDish dish in dishes)
             {
-                if (dish.Status == DishStatus.PickUp)
+                if (dish.Status == status)
                 {
-                    ListViewItem lvItem = new ListViewItem(dish.ItemName.ToString());
-                    lvItem.SubItems.Add(dish.TimeDishOrdered.ToShortTimeString());
-                    lvItem.SubItems.Add("Dish Ready");
-                    lvItem.BackColor = Color.LightGreen;
-                    lvItem.SubItems.Add(dish.OrderedDishAmount.ToString());
-                    lvOrders.Items.Add(lvItem);
-                }
-            }
-        }
-
-        //show all the drinks that are ready in the list view
-        private void ShowDrinkReady(List<OrderedDrink> drinks)
-        {
-            foreach (OrderedDrink drink in drinks)
-            {
-                if (drink.DrinkStatus == DrinkStatus.PickUp)
-                {
-                    ListViewItem lvItem = new ListViewItem(drink.ItemName.ToString());
-                    lvItem.SubItems.Add(drink.TimeDrinkOrdered.ToShortTimeString());
-                    lvItem.SubItems.Add("Drink Ready");
-                    lvItem.BackColor = Color.LightGreen;
-                    lvItem.SubItems.Add(drink.OrderedDrinkAmount.ToString());
-                    lvOrders.Items.Add(lvItem);
+                    AddDishesToListView(dish, text, color);
                 }
             }
         }
@@ -224,12 +164,7 @@ namespace RosUI
             {
                 if (dish.Status == DishStatus.Serve)
                 {
-                    ListViewItem lvItem = new ListViewItem(dish.ItemName.ToString());
-                    lvItem.SubItems.Add(dish.TimeDishOrdered.ToShortTimeString());
-                    lvItem.SubItems.Add("Served");
-                    lvItem.BackColor = Color.Yellow;
-                    lvItem.SubItems.Add(dish.OrderedDishAmount.ToString());
-                    lvOrders.Items.Add(lvItem);
+                    AddDishesToListView(dish, "Served", Color.Yellow);
                 }               
             }
 
@@ -237,14 +172,31 @@ namespace RosUI
             {
                 if (drink.DrinkStatus == DrinkStatus.Serve)
                 {
-                    ListViewItem lvItem = new ListViewItem(drink.ItemName.ToString());
-                    lvItem.SubItems.Add(drink.TimeDrinkOrdered.ToShortTimeString());
-                    lvItem.SubItems.Add("Served");
-                    lvItem.BackColor = Color.Yellow;
-                    lvItem.SubItems.Add(drink.OrderedDrinkAmount.ToString());
-                    lvOrders.Items.Add(lvItem);
+                    AddDrinksToListView(drink, "Served", Color.Yellow);
                 }
             }
+        }
+
+        //adds dishes to the list view
+        private void AddDishesToListView(OrderedDish dish, string text, Color color)
+        {
+            ListViewItem lvItem = new ListViewItem(dish.ItemName.ToString());
+            lvItem.SubItems.Add(dish.TimeDishOrdered.ToShortTimeString());
+            lvItem.SubItems.Add(text);
+            lvItem.BackColor = color;
+            lvItem.SubItems.Add(dish.OrderedDishAmount.ToString());
+            lvOrders.Items.Add(lvItem);
+        }
+
+        //adds drinks to the listview
+        private void AddDrinksToListView(OrderedDrink drink, string text, Color color)
+        {
+            ListViewItem lvItem = new ListViewItem(drink.ItemName.ToString());
+            lvItem.SubItems.Add(drink.TimeDrinkOrdered.ToShortTimeString());
+            lvItem.SubItems.Add(text);
+            lvItem.BackColor = color;
+            lvItem.SubItems.Add(drink.OrderedDrinkAmount.ToString());
+            lvOrders.Items.Add(lvItem);
         }
 
         //When Clicked will Occupy and unOccupy the tables
@@ -329,11 +281,9 @@ namespace RosUI
         private void btnDishServed_Click(object sender, EventArgs e)
         {
             try
-            {                
+            {           
                 tableOverview.GetAllOrderedDishes(table);
-                tableOverview.CheckOrderedItems(table);
-                UpdateOccupyButton(table, btnOccupy);
-                rosMain.UpdateAllListViews();             
+                UpdateButtonAndListViews();
             }
             catch (Exception exp)
             {
@@ -345,17 +295,22 @@ namespace RosUI
         private void btnDrinkServed_Click(object sender, EventArgs e)
         {
             try
-            {        
-                tableOverview.GetAllOrderedDrinks(table);                
-                tableOverview.CheckOrderedItems(table);
-                UpdateOccupyButton(table, btnOccupy);
-                rosMain.UpdateAllListViews();              
+            {             
+                tableOverview.GetAllOrderedDrinks(table);
+                UpdateButtonAndListViews();
             }
             catch (Exception exp)
             {
                 MessageBox.Show(exp.Message);
             }
             
+        }
+
+        private void UpdateButtonAndListViews()
+        {
+            tableOverview.CheckOrderedItems(table);
+            UpdateOccupyButton(table, btnOccupy);
+            rosMain.UpdateAllListViews();
         }
 
         //updates the occupy button.

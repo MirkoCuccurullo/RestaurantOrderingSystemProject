@@ -390,7 +390,7 @@ namespace RosUI
             List<OrderedDrink> readyDrinks = tableLogic.GetOrderedDrinks(table.TableNumber, DrinkStatus.PickUp);
 
 
-            if (preparingDishes.Count == 0 && preparingDrinks.Count == 0)
+            if (preparingDishes.Count == 0 && preparingDrinks.Count == 0 && readyDishes.Count == 0 && readyDrinks.Count == 0)
             {
                 table.TableStatus = TableStatus.Served;
             }
@@ -405,7 +405,7 @@ namespace RosUI
             else
             {
                 table.TableStatus = TableStatus.Standby;
-            }
+            }       
             tableLogic.Update(table);
         }
 

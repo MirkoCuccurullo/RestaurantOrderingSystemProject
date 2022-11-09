@@ -59,7 +59,7 @@ namespace RosDAL
                  "I.ItemName as name,OD.TimeDishOrdered as [Time], OD.DishNote as [Note], SUM(OD.OrderedDishAmount) as [Amount], D.Course " +
                  "from OrderDish as OD join[Order] as O on OD.OrderID = O.OrderID " +
                  "join Item as I on OD.DishID = I.ItemID join Dish as D on OD.DishID = D.DishID " +
-                $"where OD.DishStatus = @status and cast(OD.TimeDishOrdered as Date) = cast(getdate() as Date) and O.TableNumber = @TableNumber " +
+                $"where OD.DishStatus = @status and O.TableNumber = @TableNumber " +
                 "group by O.TableNumber, OD.DishStatus, OD.DishID, I.ItemName, OD.DishNote, D.Course, OD.OrderID, OD.TimeDishOrdered; ";
 
             SqlParameter[] sqlParameters = { new SqlParameter("@TableNumber", tableNumber),
